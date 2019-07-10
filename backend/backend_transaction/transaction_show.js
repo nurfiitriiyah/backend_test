@@ -10,7 +10,7 @@ async function transactionShowAllData() {
         var check_table = await knex.schema.hasTable("tb_transaction").then(async function (exists) {
             if (!exists) {
                 var createTable = await knex.schema.createTable("tb_transaction", async function (t) {
-                    t.string('transaction_id', 255);
+                    t.increments('transaction_id', 11);
                     t.string('transaction_first_name', 255);
                     t.string('transaction_last_name', 255);
                     t.string('transaction_email', 255);
@@ -20,7 +20,6 @@ async function transactionShowAllData() {
                 });
                 for (var i = 0; i < 10; i++) {
                     let rand = Math.floor(Math.random() * Math.floor(1000));
-                    var gen_id = moment().format("YYYYMMDDHHmmssx") + rand;
                     var gen_first_name = fakerator.names.firstName();
                     var gen_last_name = fakerator.names.lastName();
                     var gen_email = gen_first_name + gen_last_name + "@" + "skipper.cn";
@@ -28,8 +27,7 @@ async function transactionShowAllData() {
                     var gen_quantity = parseInt(rand * (1 / 10));
                     var gen_total_price = gen_quantity * singleItems;
                     var insertData = {
-                        transaction_id: gen_id
-                        , transaction_first_name: gen_first_name
+                        transaction_first_name: gen_first_name
                         , transaction_last_name: gen_last_name
                         , transaction_email: gen_email
                         , transaction_item: gen_item
@@ -144,11 +142,9 @@ async function generateME() {
 async function insertTransaction(data) {
     try {
         var validate_transaction = await validateTransaction(data)
-        if(validate_transaction.valid === true){
-            let rand = Math.floor(Math.random() * Math.floor(1000));
+        if (validate_transaction.valid === true) {
             var insertData = {
-                transaction_id: moment().format("YYYYMMDDHHmmssx") + rand
-                , transaction_first_name: data.post_first_name
+                transaction_first_name: data.post_first_name
                 , transaction_last_name: data.post_last_name
                 , transaction_email: data.post_email
                 , transaction_item: data.post_item
@@ -156,15 +152,15 @@ async function insertTransaction(data) {
                 , transaction_total_price: data.post_total
             }
             var insert_transaction = await knex('tb_transaction').insert(insertData);
-            return({
-                status : "ok"
+            return ({
+                status: "ok"
             })
-        }else{
+        } else {
             return ({
                 status: "nok",
                 errorMessage: validate_transaction.message
             })
-         }
+        }
     } catch (e) {
         return ({
             status: "nok",
@@ -193,9 +189,9 @@ async function validateTransaction(data) {
             valid = false;
             message.push("Item is Empty!")
         }
-        if (validator.isEmpty(data.post_quantity)) {
+        if ((validator.isEmpty(data.post_quantity)) || data.post_quantity < 1) {
             valid = false;
-            message.push("Quantity is Empty!")
+            message.push("Quantity is Empty or Quatity is 0! ")
         }
 
         return ({
