@@ -36,4 +36,4 @@ The application serve in port 3000
  
  
  <h5><b>Make sure your computer is connected</b></h5>
- This application is already in cloud you could access on "http://35.187.238.178:3000/", but for number will show status nok beause there is no access token 
+ This application is already in cloud you could access on "http://35.187.238.178:3000/", but for number 2 will show status nok because there is no access token 
